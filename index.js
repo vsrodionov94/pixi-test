@@ -3,8 +3,8 @@ const randomInteger = (min, max) => {
   return Math.round(rand);
 }
 
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
+let mouseX;
+let mouseY;
 
 let dX = 0;
 let dY = 0;
@@ -12,8 +12,10 @@ let dY = 0;
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 
 function onDocumentMouseMove({ clientX, clientY }) {
-  dX = mouseX - clientX;
-  dY = mouseY - clientY;
+  if (mouseX && mouseY) { 
+    dX = mouseX - clientX;
+    dY = mouseY - clientY;
+  }
   mouseX = clientX;
   mouseY = clientY;
 }
