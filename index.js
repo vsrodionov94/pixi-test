@@ -1,3 +1,8 @@
+const randomInteger = (min, max) => {
+  let rand = min - 0.5 + Math.random() * (max - min + 1);
+  return Math.round(rand);
+}
+
 let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
 
@@ -13,7 +18,7 @@ function onDocumentMouseMove({ clientX, clientY }) {
   mouseY = clientY;
 }
 
-const app = new PIXI.Application({ width: 1920, height: 1080});
+const app = new PIXI.Application({ width: 2488, height: 1400});
 document.body.appendChild(app.view);
 const width = app.screen.width;
 const height = app.screen.height;
@@ -28,26 +33,49 @@ const createSprite = (type, x, y, scale = 1) => {
   sprite.position.set(x, y);
   sprite.startX = x;
   sprite.startY = y;
-  sprite.alpha = 0.7;
+  sprite.alpha = 0.8;
+  sprite.target = {
+    x: x,
+    y: y,
+  }
   app.stage.addChild(sprite);
   container.addChild(sprite);
   return sprite;
 };
-const sprite1 = createSprite('sphere-2', width / 2 - 150, - 150, 0.8);
-const sprite2 = createSprite('sphere-2', width - 250, height / 2);
-const sprite3 = createSprite('sphere-3', 200, height - 150);
+const sprite1 = createSprite('sphere-2', width / 2 - 250, -50, 0.7);
+const sprite2 = createSprite('sphere-2', width - 700, height / 2);
+const sprite3 = createSprite('sphere-3', 400, height - 80);
 
-const randomMovement = sprite => {
+const randomMovement = (sprite, delta) => {
+  const { x, startX, y, startY, target } = sprite;
+  const check = Math.ceil(target.x - x) === 0 && Math.ceil(target.y - y) === 0;
+  const newDirection = randomInteger(0, 100) > 90;
 
+  if (check || newDirection) {
+    const newTarget = {
+      x: startX + randomInteger(100, 200),
+      y: startY + randomInteger(100, 200),
+    };
+    sprite.target = newTarget;
+  } else if (Math.ceil(target.x - x) !== 0) {
+    const sign = Math.sign(target.x - x);
+    sprite.x += sign * delta / 1.4;
+  } else if (Math.ceil(target.y - y) !== 0) {
+    const sign = Math.sign(target.y - y);
+    sprite.y += sign * delta / 1.4;
+  }
 };
 
 app.ticker.add((delta) => {
-  sprite1.x += dX / 8;
-  sprite1.y += dY / 8;
-  sprite2.x -= dX / 8;
-  sprite2.y -= dY / 8;
-  sprite3.x += dX / 7;
-  sprite3.y -= dY / 7;
+  randomMovement(sprite1, delta)
+  randomMovement(sprite2, delta)
+  randomMovement(sprite3, delta)
+  sprite1.x += dX / (randomInteger(12, 25));
+  sprite1.y += dY / (randomInteger(12, 25));
+  sprite2.x -= dX / (randomInteger(12, 25));
+  sprite2.y -= dY / (randomInteger(12, 25));
+  sprite3.x += dX / (randomInteger(12, 25));
+  sprite3.y -= dY / (randomInteger(12, 25));
   dX = 0;
   dY = 0;
 });
