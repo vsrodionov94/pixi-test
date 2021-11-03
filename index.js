@@ -50,7 +50,6 @@ container.addChild(sprite3);
 // displacementFilter.scale.y = 110;
 // displacementSprite.anchor.set(0.5);
 
-
 window.onresize = () => {
   app.resizeTo = window;
   app.resize();
