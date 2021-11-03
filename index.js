@@ -22,7 +22,7 @@ const container = new PIXI.Container();
 app.stage.addChild(container);
 
 const createSprite = (type, x, y, scale = 1) => {
-  const sprite = PIXI.Sprite.from(`/images/${type}.png`);
+  const sprite = PIXI.Sprite.from(`./images/${type}.png`);
   sprite.anchor.set(0.5);
   sprite.scale.set(scale);
   sprite.position.set(x, y);
