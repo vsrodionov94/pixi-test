@@ -1,7 +1,9 @@
 const randomInteger = (min, max) => {
   let rand = min - 0.5 + Math.random() * (max - min + 1);
   return Math.round(rand);
-}
+};
+
+const randomSign = () => randomInteger(0, 1) > 0 ? 1 : -1;
 
 let mouseX;
 let mouseY;
@@ -51,20 +53,18 @@ const sprite3 = createSprite('sphere-3', 400, height - 80);
 const randomMovement = (sprite, delta) => {
   const { x, startX, y, startY, target } = sprite;
   const check = Math.ceil(target.x - x) === 0 && Math.ceil(target.y - y) === 0;
-  const newDirection = randomInteger(0, 100) > 90;
-
-  if (check || newDirection) {
+  if (check) {
     const newTarget = {
-      x: startX + randomInteger(100, 200),
-      y: startY + randomInteger(100, 200),
+      x: startX + randomInteger(100, 250) * randomSign(),
+      y: startY + randomInteger(100, 250) * randomSign(),
     };
     sprite.target = newTarget;
   } else if (Math.ceil(target.x - x) !== 0) {
     const sign = Math.sign(target.x - x);
-    sprite.x += sign * delta / 1.4;
+    sprite.x += sign * delta / (randomInteger(20, 30) / 10);
   } else if (Math.ceil(target.y - y) !== 0) {
     const sign = Math.sign(target.y - y);
-    sprite.y += sign * delta / 1.4;
+    sprite.y += sign * delta / (randomInteger(20, 30) / 10);
   }
 };
 
