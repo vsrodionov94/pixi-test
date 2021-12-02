@@ -4,21 +4,22 @@ class Sphere {
     this.radius = radius;
     this.x = x;
     this.y = y;
-    this.dX = 20;
+    this.deltaPoints = 20;
     this.points = [];
     this.initPoints();
     this.initStrip();
     this.speed = 10;
     this.targetX = 0;
     this.targetY = 0;
-    this.speed = 1;
+    this.speed = 2;
     this.offset = 100;
     this.movementCountX = 0;
     this.movementCountY = 0;
+    this.count = 0;
   }
 
   initPoints() {
-    for (let i = 0; i <= this.radius * 2; i += this.dX) {
+    for (let i = 0; i <= this.radius; i += this.deltaPoints) {
       this.points.push(new PIXI.Point(i, this.y));
     }
   }
@@ -35,15 +36,17 @@ class Sphere {
   }
 
   update(delta) {
-    this.movementCountX = Math.round(this.movementCountX)
-    this.movementCountY = Math.round(this.movementCountY)
+    const speedX = Math.abs(this.movementCountX) + 100
     const dX = Math.sign(this.movementCountX) * this.speed * delta;
     const dY = Math.sign(this.movementCountY) * this.speed * delta;
     this.movementX(dX);
     this.movementY(dY);
+    this.compress();
   }
 
   movementX(dX) {
+    if (Math.ceil(this.movementCountX) === 0) return;
+    console.log(this.movementCountX)
     this.x += dX;
     for (let i = 0; i < this.points.length; i += 1) {
       this.points[i].x += dX;
@@ -51,7 +54,16 @@ class Sphere {
     this.movementCountX -= dX;
   }
 
+  compress() {
+    for (let i = 0; i < this.points.length; i += 1) {
+      const rand = Math.random();
+      this.points[i].x += Math.random() > 0.5 ? - rand : rand;
+    }
+  }
+
   movementY(dY) {
+    if (Math.ceil(this.movementCountY) === 0) return;
+
     this.y += dY;
     for (let i = 0; i < this.points.length; i += 1) {
       this.points[i].y += dY;
@@ -84,15 +96,8 @@ const app = new PIXI.Application({ width: width, height: height });
 document.body.appendChild(app.view);
 
 
-const sphere1 = new Sphere('sphere-2', 800, 200, 300);
+const sphere1 = new Sphere('sphere-2', 1600, 200, 300);
 app.stage.addChild(sphere1.strip);
-const sphere2 = new Sphere('sphere-2', 800, width / 2 + 300, height / 2 + 200);
-app.stage.addChild(sphere2.strip);
-const sphere3 = new Sphere('sphere-3', 800, 0 - 100, height + 200);
-app.stage.addChild(sphere3.strip);
-console.log(sphere1)
-console.log(sphere2)
-console.log(sphere3)
 
 app.ticker.add((delta) => {
   sphere1.incMovementCount(dX / 10, dY / 10);
