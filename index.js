@@ -38,8 +38,11 @@ document.body.appendChild(app.view);
 
 
 const sphere1 = createSphere('sphere-2', 200, 200, 300);
+app.stage.addChild(sphere1.strip);
 const sphere2 = createSphere('sphere-2', 200, width / 2 + 300, height / 2 + 200);
+app.stage.addChild(sphere2.strip);
 const sphere3 = createSphere('sphere-3', 200, 0 - 100, height + 200);
+app.stage.addChild(sphere3.strip);
 console.log(sphere1)
 console.log(sphere2)
 console.log(sphere3)
