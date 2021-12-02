@@ -1,4 +1,4 @@
-class Spere {
+class Sphere {
   constructor(key, radius, x, y) {
     this.key = key;
     this.radius = radius;
@@ -8,13 +8,13 @@ class Spere {
     this.points = [];
     this.initPoints();
     this.initStrip();
-    this.velocityX = 0;
-    this.velocityY = 0;
     this.speed = 10;
     this.targetX = 0;
     this.targetY = 0;
-    this.speed = 10;
+    this.speed = 1;
     this.offset = 100;
+    this.movementCountX = 0;
+    this.movementCountY = 0;
   }
 
   initPoints() {
@@ -29,56 +29,34 @@ class Spere {
     this.strip.y = this.y;
   }
 
-  incVelosityX(x) {
-    this.velocityX += x;
+  incMovementCount(x, y) {
+    this.movementCountX += x;
+    this.movementCountY += y;
   }
 
-  incVelosityX(y) {
-    this.velocityY += y;
-  }
-
-  update(delta, mouseX, mouseY) {
-    // if (mouseX !== this.targetX) {
-      this.targetX = mouseX;
-      if (Math.abs(this.x - this.targetX) > this.offset) {
-        const dX = Math.sign(this.targetX - this.x) * this.speed * delta;
-        this.movementX(dX);
-      }
-    // }
-    // if (mouseY !== this.targetY) {
-      this.targetY = mouseY;
-      if (Math.abs(this.y - this.targetY) > this.offset) {
-        const dY = Math.sign(this.targetY - this.y) * this.speed * delta;
-        this.movementY(dY);
-      }
-    // }
+  update(delta) {
+    this.movementCountX = Math.round(this.movementCountX)
+    this.movementCountY = Math.round(this.movementCountY)
+    const dX = Math.sign(this.movementCountX) * this.speed * delta;
+    const dY = Math.sign(this.movementCountY) * this.speed * delta;
+    this.movementX(dX);
+    this.movementY(dY);
   }
 
   movementX(dX) {
     this.x += dX;
-    if (dX > 0) {
-      for (let i = 0; i < this.points.length; i += 1) {
-        this.points[i].x += dX * (i / 10);
-      }
-    } else {
-      for (let i = 0; i < this.points.length; i += 1) {
-        this.points[i].x += dX * ((this.points.length - i) / 10);
-      }
+    for (let i = 0; i < this.points.length; i += 1) {
+      this.points[i].x += dX;
     }
-    console.log(dX)
-  };
+    this.movementCountX -= dX;
+  }
 
   movementY(dY) {
     this.y += dY;
-    if (dY > 0) {
-      for (let i = 0; i < this.points.length; i += 1) {
-        this.points[i].y += dY * (i / 10);
-      }
-    } else {
-      for (let i = 0; i < this.points.length; i += 1) {
-        this.points[i].y += dY * ((this.points.length - i) / 10);
-      }
+    for (let i = 0; i < this.points.length; i += 1) {
+      this.points[i].y += dY;
     }
+    this.movementCountY -= dY;
   }
 };
 
@@ -96,7 +74,7 @@ let dY = 0;
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 
 function onDocumentMouseMove({ clientX, clientY }) {
-  dY = mouseX - clientX;
+  dX = mouseX - clientX;
   dY = mouseY - clientY;
   mouseX = clientX;
   mouseY = clientY;
@@ -106,18 +84,19 @@ const app = new PIXI.Application({ width: width, height: height });
 document.body.appendChild(app.view);
 
 
-const sphere1 = new Spere('sphere-2', 800, 200, 300);
+const sphere1 = new Sphere('sphere-2', 800, 200, 300);
 app.stage.addChild(sphere1.strip);
-const sphere2 = new Spere('sphere-2', 800, width / 2 + 300, height / 2 + 200);
+const sphere2 = new Sphere('sphere-2', 800, width / 2 + 300, height / 2 + 200);
 app.stage.addChild(sphere2.strip);
-const sphere3 = new Spere('sphere-3', 800, 0 - 100, height + 200);
+const sphere3 = new Sphere('sphere-3', 800, 0 - 100, height + 200);
 app.stage.addChild(sphere3.strip);
 console.log(sphere1)
 console.log(sphere2)
 console.log(sphere3)
 
 app.ticker.add((delta) => {
-  sphere1.update(delta, mouseX, mouseY);
+  sphere1.incMovementCount(dX / 10, dY / 10);
+  sphere1.update(delta);
   // sphere1.movementX(-dX / 10);
   // sphere1.movementY(-dY / 10);
   // sprite2.x -= dX / 20;
