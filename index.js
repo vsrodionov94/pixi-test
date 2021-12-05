@@ -4,7 +4,7 @@ class Sphere {
     this.radius = radius;
     this.x = x;
     this.y = y;
-    this.deltaPoints = 20;
+    this.deltaPoints = 50;
     this.points = [];
     this.initPoints();
     this.initStrip();
@@ -16,12 +16,16 @@ class Sphere {
     this.movementCountX = 0;
     this.movementCountY = 0;
     this.count = 0;
+    this.compressCount = 0;
+    this.isCompress = false;
+    this.compressOffest = 100;
   }
 
   initPoints() {
     for (let i = 0; i <= this.radius; i += this.deltaPoints) {
       this.points.push(new PIXI.Point(i, this.y));
     }
+    console.log(this.points)
   }
 
   initStrip() {
@@ -41,12 +45,11 @@ class Sphere {
     const dY = Math.sign(this.movementCountY) * this.speed * delta;
     this.movementX(dX);
     this.movementY(dY);
-    this.compress();
+    this.compress(delta);
   }
 
   movementX(dX) {
     if (Math.ceil(this.movementCountX) === 0) return;
-    console.log(this.movementCountX)
     this.x += dX;
     for (let i = 0; i < this.points.length; i += 1) {
       this.points[i].x += dX;
@@ -54,10 +57,22 @@ class Sphere {
     this.movementCountX -= dX;
   }
 
-  compress() {
+  compress(delta) {
+    if (this.compressCount < this.compressOffest && !this.isCompress) {
+      this.compressCount += 1;
+    } else if (this.compressCount >= this.compressOffest && !this.isCompress) {
+      this.isCompress = true;
+    } else if (this.isCompress && this.compressCount > 0) {
+      this.compressCount -= 1;
+    } else if (this.isCompress && this.compressCount <= 0) {
+      this.isCompress = false;
+    }
     for (let i = 0; i < this.points.length; i += 1) {
-      const rand = Math.random();
-      this.points[i].x += Math.random() > 0.5 ? - rand : rand;
+      if (!this.isCompress) {
+        this.points[i].x += 0.5 * delta;
+      } else if (this.isCompress) {
+        this.points[i].x -= 0.5 * delta;
+      }
     }
   }
 
